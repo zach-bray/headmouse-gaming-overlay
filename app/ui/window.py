@@ -2,6 +2,7 @@ import AppKit
 import objc
 from core.utils import *
 from ui.panel import Panel
+from types import SimpleNamespace
 
 class Window(AppKit.NSObject):
     def initWithModel_(self, model):
@@ -15,7 +16,9 @@ class Window(AppKit.NSObject):
 
         self.drawPresets()
 
-        self.openPreset_(0)
+        self.panel = None
+
+        # self.openPreset_(SimpleNamespace(tag=0))
 
         return self
     
@@ -42,8 +45,6 @@ class Window(AppKit.NSObject):
         
         # Set window delegate to handle close event
         self.window.setDelegate_(self)
-
-        self.panel = Panel(self.presets[0])
 
     def drawPresets(self):
         scroll = AppKit.NSScrollView.alloc().initWithFrame_(AppKit.NSRect((0,0),(200,300)))
@@ -73,8 +74,12 @@ class Window(AppKit.NSObject):
         self.window.contentView().addSubview_(scroll)
 
     def openPreset_(self, sender):
-        if not self.panel:
-            self.panel = Panel(self.presets.tag)
+        if self.panel is None:
+            self.panel = Panel(self.presets[sender.tag()])
+        else:
+            print("close")
+            self.panel.close()
+            self.panel = None
         
 
     def windowShouldClose_(self, sender):
