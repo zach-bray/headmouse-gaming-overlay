@@ -1,8 +1,10 @@
 import AppKit
 import objc
 from core.utils import *
-from ui.panel import Panel
+from ui.preset import Preset
 from types import SimpleNamespace
+
+# The main window. Lists the presets
 
 class Window(AppKit.NSObject):
     def initWithModel_(self, model):
@@ -10,18 +12,20 @@ class Window(AppKit.NSObject):
         if not self:
             return
 
+        self.model = model
+        # the json dict of preset data
         self.presets = model.presets
 
         self.createWindow()
 
         self.drawPresets()
 
-        self.panel = None
+        self.open_presets = {}
 
         # self.openPreset_(SimpleNamespace(tag=0))
 
         return self
-    
+
     def createWindow(self):
         self.win_w = 200
         self.win_h = 100
@@ -57,10 +61,26 @@ class Window(AppKit.NSObject):
 
 
         for i, preset in enumerate(self.presets):
+            # setup row for buttons
+            row = AppKit.NSStackView.stackViewWithViews_([])
+            row.setOrientation_(AppKit.NSUserInterfaceLayoutOrientationHorizontal)
+            row.setSpacing_(8.0)
+            
+            # preset button, click to toggle
             btn = AppKit.NSButton.buttonWithTitle_target_action_(preset.name, self, "openPreset:")
             btn.setTag_(i)
             btn.setBezelStyle_(AppKit.NSBezelStyleRounded)
-            stack.addArrangedSubview_(btn)
+
+            # edit button
+            editIcon = AppKit.NSImage.imageWithSystemSymbolName_accessibilityDescription_("pencil", "Edit")
+            editBtn = AppKit.NSButton.buttonWithImage_target_action_(editIcon, self, "editPreset:")
+            editBtn.setTag_(i)
+            editBtn.setBezelStyle_(AppKit.NSBezelStyleRounded)
+
+            # add to view
+            row.addArrangedSubview_(btn)
+            row.addArrangedSubview_(editBtn)
+            stack.addArrangedSubview_(row)
 
 
         scroll.contentView().setWantsLayer_(True)  # Must be True for borders to show
@@ -73,14 +93,31 @@ class Window(AppKit.NSObject):
         scroll.setDocumentView_(stack)
         self.window.contentView().addSubview_(scroll)
 
+    def getPreset_(self, sender):
+        return self.presets[sender.tag()]
+
     def openPreset_(self, sender):
-        if self.panel is None:
-            self.panel = Panel(self.presets[sender.tag()])
+        tag = sender.tag()
+        if tag in self.open_presets:
+            print(f"Closing preset {tag}")
+            try:
+                self.open_presets[tag].close()
+            except Exception as e:
+                print(f"Error closing preset {tag}: {e}")
+            finally:
+                del self.open_presets[tag]
         else:
-            print("close")
-            self.panel.close()
-            self.panel = None
+            print(f"Opening preset {tag}")
+            self.open_presets[tag] = Preset(self.presets[tag], self.model)
         
+    def editPreset_(self, sender):
+        tag = sender.tag()
+        # Ensure the preset is open before editing
+        if tag not in self.open_presets:
+             print(f"Opening preset {tag} for edit")
+             self.open_presets[tag] = Preset(self.presets[tag], self.model)
+        
+        self.open_presets[tag].toggle_edit()
 
     def windowShouldClose_(self, sender):
         AppKit.NSApp.terminate_(None)
