@@ -51,7 +51,7 @@ class Panel:
             AppKit.NSWindowCollectionBehaviorFullScreenAuxiliary
         )
 
-        self.panel.makeKeyAndOrderFront_(None)
+        self.panel.orderFront_(None)
         
         # Setup delegate to track move/resize
         self.delegate = WindowDelegate.alloc().initWithData_(self.preset_data)

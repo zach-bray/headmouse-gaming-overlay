@@ -18,9 +18,8 @@ class Window(AppKit.NSObject):
 
         self.createWindow()
 
-        self.drawPresets()
-
         self.open_presets = {}
+        self.drawPresets()
 
         # self.openPreset_(SimpleNamespace(tag=0))
 
@@ -70,6 +69,8 @@ class Window(AppKit.NSObject):
             btn = AppKit.NSButton.buttonWithTitle_target_action_(preset.name, self, "openPreset:")
             btn.setTag_(i)
             btn.setBezelStyle_(AppKit.NSBezelStyleRounded)
+            # Use PushOnPushOff to allow persistent active state
+            btn.setButtonType_(AppKit.NSButtonTypePushOnPushOff)
 
             # edit button
             editIcon = AppKit.NSImage.imageWithSystemSymbolName_accessibilityDescription_("pencil", "Edit")
@@ -109,7 +110,7 @@ class Window(AppKit.NSObject):
         else:
             print(f"Opening preset {tag}")
             self.open_presets[tag] = Preset(self.presets[tag], self.model)
-        
+            
     def editPreset_(self, sender):
         tag = sender.tag()
         # Ensure the preset is open before editing
