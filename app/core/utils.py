@@ -15,3 +15,4 @@ def getResourcePath(relativePath):
     return os.path.join(basePath, relativePath)
 
 PRESET_DIR = getResourcePath("resources/presets")
+CONFIG_DIR = getResourcePath("resources/config.json")
