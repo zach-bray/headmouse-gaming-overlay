@@ -30,6 +30,12 @@ class PresetsView(AppKit.NSView):
         stack.setSpacing_(8)
         stack.setEdgeInsets_((10,10,10,10))
 
+        # Add Config Button
+        configImg = AppKit.NSImage.imageWithSystemSymbolName_accessibilityDescription_("gear", "Config")
+        configBtn = AppKit.NSButton.buttonWithImage_target_action_(configImg, self.target, "openGlobalConfig:")
+        configBtn.setBezelStyle_(AppKit.NSBezelStyleRounded)
+        stack.addArrangedSubview_(configBtn)
+
 
         for i, preset in enumerate(self.presets):
             # setup row for buttons

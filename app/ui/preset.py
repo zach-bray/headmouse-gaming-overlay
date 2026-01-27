@@ -25,7 +25,7 @@ class Preset:
              print("No panels found in preset data")
 
         for panelData in panelsData:
-            self.panels.append(PanelController(panelData))
+            self.panels.append(PanelController(panelData, self.model))
             
         self.isEditing = False
         self.configWindow = None
@@ -48,6 +48,11 @@ class Preset:
             panel = self.panels[panel_index]
             if hasattr(panel, 'container') and panel.container:
                 panel.container.updateGridLines()
+    
+    def updateOpacity(self):
+        """Update opacity for all panels."""
+        for panel in self.panels:
+            panel.updateOpacity()
     
     def toggleEdit(self):
         self.isEditing = not self.isEditing

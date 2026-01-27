@@ -5,9 +5,10 @@ import objc
 from ui.panelView import PanelView
 
 class PanelController:
-    def __init__(self, presetData):
+    def __init__(self, presetData, model):
         print("PanelController init")
         self.presetData = presetData
+        self.model = model
         print(self.presetData)
         
         # Determine width and height from data, or default
@@ -40,7 +41,10 @@ class PanelController:
         )
         
         self.panel.setLevel_(24)
-        self.panel.setAlphaValue_(0.75)
+        self.panel.setLevel_(24)
+        alpha = getattr(self.model.config, 'opacity', 0.75)
+        self.panel.setAlphaValue_(alpha)
+        self.panel.setFloatingPanel_(True)
         self.panel.setFloatingPanel_(True)
         self.panel.setBecomesKeyOnlyIfNeeded_(True)
         self.panel.standardWindowButton_(AppKit.NSWindowZoomButton).setHidden_(True)
@@ -68,6 +72,12 @@ class PanelController:
         """Show or hide the grid lines based on edit mode."""
         if hasattr(self, 'container') and self.container:
             self.container.setGridVisible(visible)
+
+    def updateOpacity(self):
+        """Update panel opacity from model config."""
+        if hasattr(self.model, 'config'):
+            alpha = getattr(self.model.config, 'opacity', 0.75)
+            self.panel.setAlphaValue_(alpha)
 
     def setupView(self):
         rect = self.panel.contentView().bounds()

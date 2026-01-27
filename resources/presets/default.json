@@ -20,8 +20,8 @@
                     "h": 1
                 }
             ],
-            "screen_x": 584.0,
-            "screen_y": 755.0,
+            "screen_x": 869.0,
+            "screen_y": 771.0,
             "screen_width": 633.0,
             "screen_height": 263.0
         },
@@ -43,7 +43,11 @@
                     "w": 1,
                     "h": 1
                 }
-            ]
+            ],
+            "screen_x": 927.0,
+            "screen_y": 208.0,
+            "screen_width": 500.0,
+            "screen_height": 500.0
         }
     ]
 }

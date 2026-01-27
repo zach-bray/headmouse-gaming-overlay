@@ -97,5 +97,18 @@ class MainWindowController(AppKit.NSObject):
         if not hasattr(self.model.config, 'main_window'):
             self.model.config.main_window = SimpleNamespace()
             
+        if not hasattr(self.model.config, 'main_window'):
+            self.model.config.main_window = SimpleNamespace()
+            
         self.model.config.main_window.x = frame.origin.x
         self.model.config.main_window.y = frame.origin.y
+
+    def openGlobalConfig_(self, sender):
+        from ui.globalConfigWindow import GlobalConfigWindow
+        self.globalConfigWindow = GlobalConfigWindow(self.model, self)
+
+    def updateGlobalSettings(self):
+        """Update settings for all open presets."""
+        for preset in self.openPresets.values():
+            if hasattr(preset, 'updateOpacity'):
+                preset.updateOpacity()

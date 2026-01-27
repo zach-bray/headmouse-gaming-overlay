@@ -2,8 +2,8 @@
     "name": "Howdy2",
     "panels": [
         {
-            "width": 10,
-            "height": 3,
+            "width": 6,
+            "height": 4,
             "actions": [
                 {
                     "key": "d",
@@ -13,8 +13,8 @@
                     "h": 1
                 }
             ],
-            "screen_x": 611.0,
-            "screen_y": 1037.0,
+            "screen_x": 870.0,
+            "screen_y": 1151.0,
             "screen_width": 584.0,
             "screen_height": 328.0
         }
