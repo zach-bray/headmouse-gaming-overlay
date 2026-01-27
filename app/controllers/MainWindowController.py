@@ -1,5 +1,6 @@
 import AppKit
 import objc
+from types import SimpleNamespace
 from ui.window import PresetsView
 from ui.preset import Preset
 
@@ -36,9 +37,20 @@ class MainWindowController(AppKit.NSObject):
 
         mask = AppKit.NSTitledWindowMask | AppKit.NSClosableWindowMask | AppKit.NSMiniaturizableWindowMask
 
-        screen = AppKit.NSScreen.mainScreen().frame()
-        x = (screen.size.width - self.winW) / 2
-        y = (screen.size.height - self.winH) / 2
+        # Check for saved position
+        x = None
+        y = None
+        
+        if hasattr(self.model.config, 'main_window'):
+             mw = self.model.config.main_window
+             x = getattr(mw, 'x', None)
+             y = getattr(mw, 'y', None)
+        
+        if x is None or y is None:
+            screen = AppKit.NSScreen.mainScreen().frame()
+            x = (screen.size.width - self.winW) / 2
+            y = (screen.size.height - self.winH) / 2
+            
         rect = AppKit.NSMakeRect(x, y, self.winW, self.winH)
 
         self.mainWindow = AppKit.NSWindow.alloc().initWithContentRect_styleMask_backing_defer_(
@@ -72,8 +84,18 @@ class MainWindowController(AppKit.NSObject):
              preset_data = self.model.presets[tag]
              self.openPresets[tag] = Preset(preset_data, self.model)
         
-        self.openPresets[tag].toggle_edit()
+        self.openPresets[tag].toggleEdit()
 
     def windowShouldClose_(self, sender):
         AppKit.NSApp.terminate_(None)
         return True
+
+    def windowDidMove_(self, notification):
+        """Update config when window moves."""
+        frame = self.mainWindow.frame()
+        
+        if not hasattr(self.model.config, 'main_window'):
+            self.model.config.main_window = SimpleNamespace()
+            
+        self.model.config.main_window.x = frame.origin.x
+        self.model.config.main_window.y = frame.origin.y

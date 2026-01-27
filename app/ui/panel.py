@@ -63,6 +63,11 @@ class Panel:
         # Ensure delegate is cleaned up or data is finalized if needed
         self.panel.setDelegate_(None)
         self.panel.close()
+    
+    def setGridVisible(self, visible):
+        """Show or hide the grid lines based on edit mode."""
+        if hasattr(self, 'container') and self.container:
+            self.container.setGridVisible(visible)
 
     def setup_view(self):
         rect = self.panel.contentView().bounds()
@@ -122,7 +127,14 @@ class FlippedContainer(AppKit.NSView):
         self.gridLayer.setStrokeColor_(AppKit.NSColor.lightGrayColor().CGColor())
         self.gridLayer.setLineWidth_(1.0)
         self.gridLayer.setFillColor_(None)
+        self.gridLayer.setHidden_(True)  # Hidden by default, shown in edit mode
         self.layer().addSublayer_(self.gridLayer)
+    
+    @objc.python_method
+    def setGridVisible(self, visible):
+        """Show or hide the grid layer."""
+        if hasattr(self, 'gridLayer') and self.gridLayer:
+            self.gridLayer.setHidden_(not visible)
 
     def updateGridLines(self):
         size = self.bounds().size
@@ -152,6 +164,33 @@ class FlippedContainer(AppKit.NSView):
             Quartz.CGPathAddLineToPoint(path, None, size.width, y)
             
         self.gridLayer.setPath_(path)
+        
+        # Update button positions and sizes when grid changes
+        self.updateButtons()
+    
+    def updateButtons(self):
+        """Update button positions and sizes based on current grid dimensions."""
+        bounds = self.bounds().size
+        
+        p_width = getattr(self.preset, 'width', 1)
+        p_height = getattr(self.preset, 'height', 1)
+        if p_width == 0: p_width = 1
+        if p_height == 0: p_height = 1
+        
+        gridW = bounds.width / p_width
+        gridH = bounds.height / p_height
+        
+        # Find all Box subviews and update their frames
+        for subview in self.subviews():
+            if hasattr(subview, 'x') and hasattr(subview, 'y'):
+                # This is a Box with grid position
+                new_rect = AppKit.NSMakeRect(
+                    subview.x * gridW, 
+                    subview.y * gridH, 
+                    gridW, 
+                    gridH
+                )
+                subview.setFrame_(new_rect)
 
     def setFrameSize_(self, newSize):
         objc.super(FlippedContainer, self).setFrameSize_(newSize)

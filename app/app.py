@@ -15,12 +15,19 @@ class AppController(AppKit.NSObject):
         
         self.app = AppKit.NSApplication.sharedApplication()
         self.app.setActivationPolicy_(AppKit.NSApplicationActivationPolicyRegular)
+        self.app.setDelegate_(self)  # Set self as app delegate to handle termination
         
         self.model = Model()
         self.windowController = MainWindowController.alloc().initWithModel_(self.model)
         self.windowController.showWindow()
         
         return self
+    
+    def applicationWillTerminate_(self, notification):
+        """Save all preset data when the application is about to quit."""
+        print("Application terminating...")
+        if self.model:
+            self.model.save()
 
     def run(self):
         AppHelper.runEventLoop()
