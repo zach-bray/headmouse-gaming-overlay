@@ -4,7 +4,7 @@ from PyObjCTools import AppHelper
 import objc
 import AppKit
 
-from controllers.MainWindowController import MainWindowController
+from controllers.mainWindowController import MainWindowController
 from model import Model
 import objc
 

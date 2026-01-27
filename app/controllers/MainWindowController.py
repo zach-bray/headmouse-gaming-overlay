@@ -73,16 +73,16 @@ class MainWindowController(AppKit.NSObject):
         else:
             print(f"Opening preset {tag}")
             # Ensure model.presets is accessed correctly
-            preset_data = self.model.presets[tag]
-            self.openPresets[tag] = Preset(preset_data, self.model)
+            presetData = self.model.presets[tag]
+            self.openPresets[tag] = Preset(presetData, self.model)
             
     def editPreset_(self, sender):
         tag = sender.tag()
         # Ensure the preset is open before editing
         if tag not in self.openPresets:
              print(f"Opening preset {tag} for edit")
-             preset_data = self.model.presets[tag]
-             self.openPresets[tag] = Preset(preset_data, self.model)
+             presetData = self.model.presets[tag]
+             self.openPresets[tag] = Preset(presetData, self.model)
         
         self.openPresets[tag].toggleEdit()
 

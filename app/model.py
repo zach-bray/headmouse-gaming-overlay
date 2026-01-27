@@ -43,25 +43,25 @@ class Model():
             print(f"Config not found or invalid at {CONFIG_DIR}, creating new.")
             return SimpleNamespace()
 
-    def _to_dict(self, obj):
+    def _toDict(self, obj):
         if isinstance(obj, SimpleNamespace):
-            return {k: self._to_dict(v) for k, v in vars(obj).items() if k != 'filepath'}
+            return {k: self._toDict(v) for k, v in vars(obj).items() if k != 'filepath'}
         elif isinstance(obj, list):
-            return [self._to_dict(i) for i in obj]
+            return [self._toDict(i) for i in obj]
         else:
             return obj
 
-    def savePreset(self, preset_data):
-        if not hasattr(preset_data, 'filepath'):
+    def savePreset(self, presetData):
+        if not hasattr(presetData, 'filepath'):
             print("No filepath to save preset")
             return
             
-        data = self._to_dict(preset_data)
+        data = self._toDict(presetData)
         
         try:
-            with open(preset_data.filepath, 'w') as f:
+            with open(presetData.filepath, 'w') as f:
                 json.dump(data, f, indent=4)
-            print(f"Saved preset to {preset_data.filepath}")
+            print(f"Saved preset to {presetData.filepath}")
         except Exception as e:
             print(f"Failed to save preset: {e}")
             
@@ -69,7 +69,7 @@ class Model():
         if not self.config:
             return
             
-        data = self._to_dict(self.config)
+        data = self._toDict(self.config)
         
         try:
             with open(CONFIG_DIR, 'w') as f:
@@ -81,8 +81,8 @@ class Model():
     def save(self):
         """Save all presets and config to disk."""
         print(f"Saving {len(self.presets)} preset(s)...")
-        for preset_data in self.presets:
-            self.savePreset(preset_data)
+        for presetData in self.presets:
+            self.savePreset(presetData)
             
         print("Saving config...")
         self.saveConfig()

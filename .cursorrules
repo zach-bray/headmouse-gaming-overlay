@@ -1,0 +1,23 @@
+# Coding Style & Conventions
+
+## Naming Conventions
+- **Files & Directories**: Use `camelCase` for all file and directory names (e.g., `panelController.py`, `presetConfigWindow.py`).
+  - *Exception*: Top-level entry points or configuration files may use standard naming if required by the framework, but default to camelCase.
+- **Variables & Methods**: Use `camelCase` for all variable and method names in Python (e.g., `updateGeometry`, `presetData`).
+  - *Exception*: Standard Python class methods like `__init__` or library overrides that require specific naming (e.g., PyObjC delegate methods like `windowDidMove_`).
+- **Classes**: Use `PascalCase` for class names (e.g., `PanelController`, `MainWindowController`).
+
+## Project Structure
+- **app/**: Main application source code.
+  - **controllers/**: Business logic and window controllers (e.g., `MainWindowController.py`).
+  - **ui/**: View classes and UI components (e.g., `panelView.py`, `box.py`).
+  - **core/**: Utilities and core logic.
+  - **model.py**: Data model and persistence persistence logic.
+
+## Python & PyObjC Specifics
+- **PyObjC Decorators**: Use `@objc.python_method` for Python-only methods in `NSObject` subclasses to avoid selector inference errors (e.g., `BadPrototypeError`).
+- **Imports**: Use absolute imports from the `app` root when possible, or relative naming consistent withthe folder structure.
+
+## Configuration & Persistence
+- Configuration should be loaded into `Model` at startup and saved only on application termination.
+- Avoid writing to disk during runtime operations (e.g., resize/move); keep state in memory.

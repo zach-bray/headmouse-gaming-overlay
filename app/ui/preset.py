@@ -1,31 +1,31 @@
 import AppKit
 import json
 from types import SimpleNamespace
-from ui.panel import Panel
-from ui.preset_config_window import PresetConfigWindow
+from controllers.panelController import PanelController
+from ui.presetConfigWindow import PresetConfigWindow
 
 # Preset Controller manages a single preset entity
 # Creates all the panels inside the preset
 # Controlls configuration
 
 class Preset:
-    def __init__(self, preset_data, model):
+    def __init__(self, presetData, model):
         print("Preset init")
-        self.preset_data = preset_data
+        self.presetData = presetData
         self.model = model
         self.panels = []
         
         # The loaded data (SimpleNamespace) now matches the JSON structure:
         # { "name": "...", "panels": [ ... ] }
         
-        panels_data = getattr(self.preset_data, 'panels', [])
+        panelsData = getattr(self.presetData, 'panels', [])
         
         # Fallback if panels is not present or if data structure is unexpected
-        if not panels_data:
+        if not panelsData:
              print("No panels found in preset data")
 
-        for panel_data in panels_data:
-            self.panels.append(Panel(panel_data))
+        for panelData in panelsData:
+            self.panels.append(PanelController(panelData))
             
         self.isEditing = False
         self.configWindow = None
@@ -59,7 +59,7 @@ class Preset:
         
         if self.isEditing:
             # Open configuration window, pass self so it can update panels
-            self.configWindow = PresetConfigWindow(self.preset_data, self.model, self)
+            self.configWindow = PresetConfigWindow(self.presetData, self.model, self)
         else:
             # Close configuration window
             if self.configWindow:
@@ -78,6 +78,6 @@ class Preset:
 
     def save(self):
         if self.model:
-            self.model.savePreset(self.preset_data)
+            self.model.savePreset(self.presetData)
         else:
             print("No model available to save preset")
